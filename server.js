@@ -182,8 +182,8 @@ res.json({
   kode: pasar.kode,
   nama: pasar.nama,
   tanggal: terbaru.date,
-  jam: ambilJam(terbaru),
-  angka: ambilAngka(terbaru.number)
+  angka: ambilAngka(terbaru.number),
+  DEBUG_DATA: terbaru
 });
 
   } catch (error) {
