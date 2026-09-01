@@ -134,7 +134,7 @@ const hasil = semuaData
   .filter(x =>
     String(x.name).trim().toUpperCase() ===
     namaSumber.trim().toUpperCase()
-  );
+  )
       .sort((a, b) => {
         const [da, ma, ya] = String(a.date).split("-");
         const [db, mb, yb] = String(b.date).split("-");
