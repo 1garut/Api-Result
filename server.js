@@ -88,6 +88,32 @@ function flattenData(value) {
   );
 }
 
+function ambilJam(data) {
+  return (
+    data?.jam ||
+    data?.time ||
+    data?.waktu ||
+    data?.draw_time ||
+    data?.drawTime ||
+    ""
+  );
+}
+
+function nilaiTanggalJam(data) {
+  const tanggal = String(data?.date || "").trim();
+  const jam = String(ambilJam(data) || "00:00:00").trim();
+
+  const [d, m, y] = tanggal.split("-");
+
+  if (!d || !m || !y) return 0;
+
+  const waktu = new Date(`${y}-${m}-${d}T${jam}`);
+
+  return isNaN(waktu.getTime())
+    ? new Date(`${y}-${m}-${d}T00:00:00`).getTime()
+    : waktu.getTime();
+}
+
 app.get("/", (req, res) => {
   res.json({
     message: "API Result aktif",
@@ -135,13 +161,9 @@ const hasil = semuaData
     String(x.name).trim().toUpperCase() ===
     namaSumber.trim().toUpperCase()
   )
-      .sort((a, b) => {
-        const [da, ma, ya] = String(a.date).split("-");
-        const [db, mb, yb] = String(b.date).split("-");
-
-        return new Date(`${yb}-${mb}-${db}`) -
-               new Date(`${ya}-${ma}-${da}`);
-      });
+  .sort((a, b) => {
+    return nilaiTanggalJam(b) - nilaiTanggalJam(a);
+  });
 
     if (!hasil.length) {
       return res.status(404).json({
@@ -155,13 +177,14 @@ const hasil = semuaData
 
     const terbaru = hasil[0];
 
-    res.json({
-      status: true,
-      kode: pasar.kode,
-      nama: pasar.nama,
-      tanggal: terbaru.date,
-      angka: ambilAngka(terbaru.number)
-    });
+res.json({
+  status: true,
+  kode: pasar.kode,
+  nama: pasar.nama,
+  tanggal: terbaru.date,
+  jam: ambilJam(terbaru),
+  angka: ambilAngka(terbaru.number)
+});
 
   } catch (error) {
     res.status(500).json({
