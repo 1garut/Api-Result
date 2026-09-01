@@ -64,6 +64,11 @@ const pasaran = [
   { nama: "KINGKONG P1", kode: "m83" }
 ];
 
+const sourceNames = {
+  m17: "4DTotoMacau",
+  m51: "5DTotoMacau",
+  m83: "KingKong4D"
+};
 const SOURCE_URL =
   "https://96fqi69zo1.tanjung918.com/json/fetch/index/data";
 
@@ -120,13 +125,16 @@ app.get("/api", async (req, res) => {
 
     const json = await response.json();
 
-    const semuaData = flattenData(json.data);
+const semuaData = flattenData(json?.data?.last_result?.data);
 
-    const hasil = semuaData
-      .filter(x =>
-        String(x.name).trim().toUpperCase() ===
-        pasar.nama.trim().toUpperCase()
-      )
+const namaSumber =
+  sourceNames[pasar.kode] || pasar.nama;
+
+const hasil = semuaData
+  .filter(x =>
+    String(x.name).trim().toUpperCase() ===
+    namaSumber.trim().toUpperCase()
+  );
       .sort((a, b) => {
         const [da, ma, ya] = String(a.date).split("-");
         const [db, mb, yb] = String(b.date).split("-");
